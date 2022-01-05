@@ -1,7 +1,6 @@
 import asyncio
 from threading import Thread
 import requests as req
-from time import sleep
 from PySide2.QtWidgets \
 	import QMainWindow, QVBoxLayout, QPushButton, QWidget
 
