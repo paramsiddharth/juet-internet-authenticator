@@ -5,6 +5,8 @@ from time import sleep
 from PySide2.QtWidgets \
 	import QMainWindow, QVBoxLayout, QPushButton, QWidget
 
+from data import app_name, test_url
+
 # class Main(QMainWindow):
 class Main(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -28,7 +30,7 @@ class Main(QMainWindow):
 		# self.setLayout(layout) # So this won't work for some unknown reason
 		# self.layout().addChildLayout(layout)
 
-		self.setWindowTitle('JUET Internet Authenticator')
+		self.setWindowTitle(app_name)
 
 		thread = Thread(target=asyncio.run, args=(self.check_status(),))
 		thread.start()
@@ -43,7 +45,7 @@ class Main(QMainWindow):
 	
 	async def check_status(self):
 		try:
-			req.get('https://www.google.com')
+			req.get(test_url)
 		except:
 			self.connected = False
 			self.connect_button.setText('Connect')
