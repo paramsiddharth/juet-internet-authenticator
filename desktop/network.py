@@ -3,8 +3,12 @@ from http.client import HTTPConnection
 import requests as req
 
 from data import test_url, desk_url, routes
+from auth import get_username
 
-__all__ = ['is_connected', 'disconnect']
+__all__ = [
+	'is_connected',
+	'disconnect'
+]
 
 def remove_prefix(url):
 	prefixes = ('https://', 'http://')
@@ -32,7 +36,7 @@ def disconnect():
 		resp = req.post(url, data={
 			'mode': 193,
 			'producttype': 0,
-			'username': 'XXXBXXX' # Replace this with your username
+			'username': get_username()
 		})
 		if resp.ok:
 			return True
