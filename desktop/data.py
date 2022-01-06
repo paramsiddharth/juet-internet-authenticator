@@ -8,3 +8,4 @@ desk_url = 'http://10.10.10.1:8090/'
 class routes:
 	login = 'login.xml'
 	logout = 'logout.xml'
+	home = 'httpclient.html'

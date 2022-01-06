@@ -8,7 +8,8 @@ from auth import get_username, get_password
 
 __all__ = [
 	'is_connected',
-	'disconnect'
+	'disconnect',
+	'connect'
 ]
 
 def remove_prefix(url):
@@ -74,3 +75,10 @@ def connect():
 	except Exception as e:
 		print(e.args, file=stderr)
 	return False
+
+def is_juet_network():
+	try:
+		r = req.get(desk_url + routes.home)
+		return r.ok
+	except:
+		return False

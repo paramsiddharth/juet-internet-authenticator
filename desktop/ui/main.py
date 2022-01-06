@@ -7,7 +7,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtCore import Qt, Signal
 
 from data import app_name
-from network import is_connected, disconnect, connect
+from network import is_connected, disconnect, connect, is_juet_network
 
 class Main(QMainWindow):
 	set_status = Signal(str, str)
@@ -67,6 +67,7 @@ class Main(QMainWindow):
 					self.connect_button.setText('Disconnect')
 					self.connect_button.setDisabled(False)
 					self.set_status('ERROR', 'red')
+					print(end='\a')
 			else:
 				self.set_status('Connecting...', 'blue')
 				self.connect_button.setText('Connecting...')
@@ -79,10 +80,16 @@ class Main(QMainWindow):
 					self.connect_button.setText('Connect')
 					self.connect_button.setDisabled(False)
 					self.set_status('ERROR', 'red')
+					print(end='\a')
 		thread = Thread(target=click_action)
 		thread.start()
 
 	async def check_status(self):
+		if not is_juet_network():
+			self.connect_button.setDisabled(True)
+			self.connect_button.setText('Unavailable')
+			self.set_status('Not on JUET LAN', 'grey')
+			return
 		self.connected = is_connected()
 		if self.connected:
 			self.connect_button.setText('Disconnect')
@@ -95,4 +102,3 @@ class Main(QMainWindow):
 	def set_status(self, msg='READY', color='green'):
 		self.status.setText(msg)
 		self.status.setStyleSheet(f'color: {color};')
-
