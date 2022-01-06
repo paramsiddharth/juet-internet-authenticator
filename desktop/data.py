@@ -6,5 +6,5 @@ config_file = '.juetrc'
 test_url = 'https://www.google.com'
 desk_url = 'http://10.10.10.1:8090/'
 class routes:
-	login = 'login.xml',
+	login = 'login.xml'
 	logout = 'logout.xml'

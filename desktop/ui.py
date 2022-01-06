@@ -7,7 +7,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtCore import Qt
 
 from data import app_name
-from network import is_connected, disconnect
+from network import is_connected, disconnect, connect
 
 class Main(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -58,8 +58,11 @@ class Main(QMainWindow):
 			else:
 				self.set_status('ERROR', color='red')
 		else:
-			self.connected = True
-			self.connect_button.setText('Disconnect')
+			if connect():
+				self.connected = True
+				self.connect_button.setText('Disconnect')
+			else:
+				self.set_status('ERROR', color='red')
 
 	async def check_status(self):
 		self.connected = is_connected()
