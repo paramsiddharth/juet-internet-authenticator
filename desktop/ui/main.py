@@ -1,8 +1,8 @@
 import asyncio
 from threading import Thread
-from os import path, getcwd
+from pathlib import Path
 from PySide2.QtWidgets \
-	import QMainWindow, QVBoxLayout, QPushButton, QWidget, \
+	import QMainWindow, QStyle, QVBoxLayout, QPushButton, QWidget, \
 	QStatusBar, QLabel, QHBoxLayout
 from PySide2.QtGui import QFont, QIcon
 from PySide2.QtCore import Qt, Signal
@@ -32,9 +32,16 @@ class Main(QMainWindow):
 		# std_icon = self.style().standardIcon
 		# settings_icon = std_icon(QStyle.SP_DialogOpenButton)
 		settings_button = QPushButton('')
-		settings_button.setIcon(QIcon(path.join(getcwd(), 'icons', 'settings.svg')))
+		settings_button.setIcon(QIcon(str(Path(__file__).resolve().parent / '..' / 'icons' / 'settings.svg')))
 		buttons.addWidget(settings_button)
 		settings_button.clicked.connect(self.settings.show)
+
+		std_icon = self.style().standardIcon
+		info_icon = std_icon(QStyle.SP_FileDialogInfoView)
+		info_button = QPushButton('')
+		# info_button.setIcon(QIcon(info_icon))
+		info_button.setIcon(QIcon(str(Path(__file__).resolve().parent / '..' / 'icons' / 'info.svg')))
+		buttons.addWidget(info_button)
 
 		title = QLabel('JUET Internet Authenticator')
 		title.setStyleSheet('padding-top: 10px; padding-bottom: 15px; font-weight: bold;')
