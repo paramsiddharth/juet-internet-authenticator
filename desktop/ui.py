@@ -1,13 +1,13 @@
 import asyncio
 from threading import Thread
-import requests as req
 from PySide2.QtWidgets \
 	import QMainWindow, QVBoxLayout, QPushButton, QWidget, \
 	QStatusBar, QLabel
 from PySide2.QtGui import QFont
 from PySide2.QtCore import Qt
 
-from data import app_name, test_url
+from data import app_name
+from network import is_connected, disconnect
 
 class Main(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -50,22 +50,23 @@ class Main(QMainWindow):
 
 	def click_connect(self):
 		if self.connected:
-			self.connected = False
-			self.connect_button.setText('Connect')
+			self.set_status('Disconnecting...', color='blue')
+			if disconnect():
+				self.connected = False
+				self.connect_button.setText('Connect')
+				self.set_status()
+			else:
+				self.set_status('ERROR', color='red')
 		else:
 			self.connected = True
 			self.connect_button.setText('Disconnect')
-	
+
 	async def check_status(self):
-		try:
-			req.get(test_url)
-		except Exception as e:
-			print(e.args)
-			self.connected = False
-			self.connect_button.setText('Connect')
-		else:
-			self.connected = True
+		self.connected = is_connected()
+		if self.connected:
 			self.connect_button.setText('Disconnect')
+		else:
+			self.connect_button.setText('Connect')
 		self.connect_button.setDisabled(False)
 		self.set_status()
 	
