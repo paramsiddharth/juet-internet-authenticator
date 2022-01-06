@@ -43,8 +43,10 @@ def disconnect():
 			'producttype': 0,
 			'username': username
 		})
-		while is_connected():
+		i = 5
+		while is_connected() and i > 0:
 			sleep(0.4)
+			i -= 1
 		if resp.ok and not is_connected():
 			return True
 	except Exception as e:
