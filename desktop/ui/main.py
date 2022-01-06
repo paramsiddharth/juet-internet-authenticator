@@ -4,12 +4,14 @@ from PySide2.QtWidgets \
 	import QMainWindow, QVBoxLayout, QPushButton, QWidget, \
 	QStatusBar, QLabel
 from PySide2.QtGui import QFont
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Signal
 
 from data import app_name
 from network import is_connected, disconnect, connect
 
 class Main(QMainWindow):
+	set_status = Signal(str, str)
+
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
@@ -33,9 +35,11 @@ class Main(QMainWindow):
 		status_bar = QStatusBar()
 		status = QLabel()
 		self.status = status
-		self.set_status('Loading...', color='grey')
 		status_bar.addPermanentWidget(status)
 		layout.addWidget(status_bar)
+
+		# self.set_status.connect(self.on_set_status)
+		self.set_status('Loading...', 'grey')
 
 		thread = Thread(target=asyncio.run, args=(self.check_status(),))
 		thread.start()
@@ -49,43 +53,46 @@ class Main(QMainWindow):
 		self.setWindowTitle(app_name)
 
 	def click_connect(self):
-		if self.connected:
-			self.set_status('Disconnecting...', color='blue')
-			self.connect_button.setText('Disconnecting...')
-			self.connect_button.setDisabled(True)
-			if disconnect():
-				self.connected = False
-				self.connect_button.setText('Connect')
-				self.connect_button.setDisabled(False)
-				self.set_status('DISCONNECTED', color='grey')
+		self.connect_button.setDisabled(True)
+		def click_action():
+			if self.connected:
+				self.set_status('Disconnecting...', 'blue')
+				self.connect_button.setText('Disconnecting...')
+				if disconnect():
+					self.connected = False
+					self.connect_button.setText('Connect')
+					self.connect_button.setDisabled(False)
+					self.set_status('DISCONNECTED', 'grey')
+				else:
+					self.connect_button.setText('Disconnect')
+					self.connect_button.setDisabled(False)
+					self.set_status('ERROR', 'red')
 			else:
-				self.connect_button.setText('Disconnect')
-				self.connect_button.setDisabled(False)
-				self.set_status('ERROR', color='red')
-		else:
-			self.set_status('Connecting...', color='blue')
-			self.connect_button.setText('Connecting...')
-			self.connect_button.setDisabled(True)
-			if connect():
-				self.connected = True
-				self.connect_button.setText('Disconnect')
-				self.connect_button.setDisabled(False)
-				self.set_status('CONNECTED')
-			else:
-				self.connect_button.setText('Connect')
-				self.connect_button.setDisabled(False)
-				self.set_status('ERROR', color='red')
+				self.set_status('Connecting...', 'blue')
+				self.connect_button.setText('Connecting...')
+				if connect():
+					self.connected = True
+					self.connect_button.setText('Disconnect')
+					self.connect_button.setDisabled(False)
+					self.set_status('CONNECTED', 'green')
+				else:
+					self.connect_button.setText('Connect')
+					self.connect_button.setDisabled(False)
+					self.set_status('ERROR', 'red')
+		thread = Thread(target=click_action)
+		thread.start()
 
 	async def check_status(self):
 		self.connected = is_connected()
 		if self.connected:
 			self.connect_button.setText('Disconnect')
-			self.set_status('CONNECTED')
+			self.set_status('CONNECTED', 'green')
 		else:
 			self.connect_button.setText('Connect')
-			self.set_status('DISCONNECTED', color='grey')
+			self.set_status('DISCONNECTED', 'grey')
 		self.connect_button.setDisabled(False)
 	
 	def set_status(self, msg='READY', color='green'):
 		self.status.setText(msg)
 		self.status.setStyleSheet(f'color: {color};')
+
