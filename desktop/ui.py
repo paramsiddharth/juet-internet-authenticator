@@ -37,6 +37,9 @@ class Main(QMainWindow):
 		status_bar.addPermanentWidget(status)
 		layout.addWidget(status_bar)
 
+		thread = Thread(target=asyncio.run, args=(self.check_status(),))
+		thread.start()
+
 		# A reminder for future me to not use the below technique because the
 		# resulting UI isn't very good. Rather, use an extra QWidget as the central
 		# for the QMainWindow.
@@ -45,33 +48,43 @@ class Main(QMainWindow):
 
 		self.setWindowTitle(app_name)
 
-		thread = Thread(target=asyncio.run, args=(self.check_status(),))
-		thread.start()
-
 	def click_connect(self):
 		if self.connected:
 			self.set_status('Disconnecting...', color='blue')
+			self.connect_button.setText('Disconnecting...')
+			self.connect_button.setDisabled(True)
 			if disconnect():
 				self.connected = False
 				self.connect_button.setText('Connect')
-				self.set_status()
+				self.connect_button.setDisabled(False)
+				self.set_status('DISCONNECTED', color='grey')
 			else:
+				self.connect_button.setText('Disconnect')
+				self.connect_button.setDisabled(False)
 				self.set_status('ERROR', color='red')
 		else:
+			self.set_status('Connecting...', color='blue')
+			self.connect_button.setText('Connecting...')
+			self.connect_button.setDisabled(True)
 			if connect():
 				self.connected = True
 				self.connect_button.setText('Disconnect')
+				self.connect_button.setDisabled(False)
+				self.set_status('CONNECTED')
 			else:
+				self.connect_button.setText('Connect')
+				self.connect_button.setDisabled(False)
 				self.set_status('ERROR', color='red')
 
 	async def check_status(self):
 		self.connected = is_connected()
 		if self.connected:
 			self.connect_button.setText('Disconnect')
+			self.set_status('CONNECTED')
 		else:
 			self.connect_button.setText('Connect')
+			self.set_status('DISCONNECTED', color='grey')
 		self.connect_button.setDisabled(False)
-		self.set_status()
 	
 	def set_status(self, msg='READY', color='green'):
 		self.status.setText(msg)

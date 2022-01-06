@@ -1,4 +1,5 @@
 from sys import stderr
+from time import sleep
 from http.client import HTTPConnection
 import requests as req
 
@@ -42,7 +43,9 @@ def disconnect():
 			'producttype': 0,
 			'username': username
 		})
-		if resp.ok:
+		while is_connected():
+			sleep(0.4)
+		if resp.ok and not is_connected():
 			return True
 	except Exception as e:
 		print(e.args, file=stderr)
