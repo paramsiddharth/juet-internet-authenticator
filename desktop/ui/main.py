@@ -1,13 +1,15 @@
 import asyncio
 from threading import Thread
+from os import path, getcwd
 from PySide2.QtWidgets \
 	import QMainWindow, QVBoxLayout, QPushButton, QWidget, \
-	QStatusBar, QLabel
-from PySide2.QtGui import QFont
+	QStatusBar, QLabel, QHBoxLayout
+from PySide2.QtGui import QFont, QIcon
 from PySide2.QtCore import Qt, Signal
 
 from data import app_name
 from network import is_connected, disconnect, connect, is_juet_network
+from .settings import Settings
 
 class Main(QMainWindow):
 	set_status = Signal(str, str)
@@ -15,13 +17,27 @@ class Main(QMainWindow):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.settings = Settings(parent=self)
+
 		main_widget = QWidget()
 		self.setCentralWidget(main_widget)
 
 		layout = QVBoxLayout()
 		main_widget.setLayout(layout)
 
+		buttons = QHBoxLayout()
+		buttons.addStretch()
+		layout.addLayout(buttons)
+
+		# std_icon = self.style().standardIcon
+		# settings_icon = std_icon(QStyle.SP_DialogOpenButton)
+		settings_button = QPushButton('')
+		settings_button.setIcon(QIcon(path.join(getcwd(), 'icons', 'settings.svg')))
+		buttons.addWidget(settings_button)
+		settings_button.clicked.connect(self.settings.show)
+
 		title = QLabel('JUET Internet Authenticator')
+		title.setStyleSheet('padding-top: 10px; padding-bottom: 15px; font-weight: bold;')
 		title.setFont(QFont(QFont.defaultFamily(QFont()), 17))
 		title.setAlignment(Qt.AlignCenter)
 		layout.addWidget(title)
@@ -98,7 +114,7 @@ class Main(QMainWindow):
 			self.connect_button.setText('Connect')
 			self.set_status('DISCONNECTED', 'grey')
 		self.connect_button.setDisabled(False)
-	
+
 	def set_status(self, msg='READY', color='green'):
 		self.status.setText(msg)
 		self.status.setStyleSheet(f'color: {color};')
