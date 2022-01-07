@@ -84,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./dist/juet-network-authenticator
+        path: ./desktop/dist/juet-network-authenticator
 
   build-windows:
 
@@ -102,16 +102,16 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        if exist requirements.txt pip install -r requirements.txt
-        if exist build-requirements.txt pip install -r build-requirements.txt
+        if (Test-Path -Path requirements.txt -PathType Leaf) { pip install -r requirements.txt }
+        if (Test-Path -Path build-requirements.txt -PathType Leaf) { pip install -r build-requirements.txt }
     - name: Build executable binary
       run: |
-        pyinstaller --add-data "icons:icons" -wF -n juet-internet-authenticator app.py
+        pyinstaller --add-data 'icons:icons' -wF -n juet-internet-authenticator app.py
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./dist/juet-network-authenticator.exe
+        path: ./desktop/dist/juet-network-authenticator.exe
 
   # build-macos:
 
