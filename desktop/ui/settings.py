@@ -1,8 +1,8 @@
-from threading import Thread
-import asyncio
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QLabel, QLineEdit, QMainWindow, QVBoxLayout, QWidget
-
+from PySide2.QtWidgets \
+	import QLabel, QLineEdit, QMainWindow, \
+	QMessageBox, QPushButton, QVBoxLayout, QWidget
 from data import app_name
 from helpers import resolve_icon
 from auth import get_username, get_password
@@ -10,6 +10,9 @@ from auth import get_username, get_password
 class Settings(QMainWindow):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
+		self.setWindowFlag(Qt.Tool, True)
+		# self.setWindowFlag(Qt.CustomizeWindowHint, True)
+		# self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
 
 		main_widget = QWidget()
 		self.setCentralWidget(main_widget)
@@ -40,11 +43,19 @@ class Settings(QMainWindow):
 		layout.addWidget(password)
 		self.password = password
 
+		save_button = QPushButton('Save changes')
+		save_button.setDisabled(True)
+		layout.addWidget(save_button)
+		self.save_button = save_button
+		save_button.clicked.connect(self.save_settings)
+
+		username.textEdited.connect(lambda: save_button.setDisabled(False))
+		password.textEdited.connect(lambda: save_button.setDisabled(False))
+
 		self.setWindowTitle('Settings - ' + app_name)
 	
 	def load_settings(self):
 		u, p = get_username(), get_password()
-		# print(u, p)
 		if u is not None:
 			self.username.setText(u)
 		if p is not None:
@@ -54,6 +65,34 @@ class Settings(QMainWindow):
 		self.username.setVisible(True)
 		self.password.setVisible(True)
 	
+	def save_settings(self):
+		u, p = self.username.text(), self.password.text()
+		if len(u) < 1:
+			error = QMessageBox()
+			error.setWindowTitle('Error')
+			error.setIcon(QMessageBox.Warning)
+			error.setText('Enter a username.')
+			error.exec_()
+			return
+		if len(p) < 1:
+			error = QMessageBox()
+			error.setWindowTitle('Error')
+			error.setIcon(QMessageBox.Warning)
+			error.setText('Enter a password.')
+			error.exec_()
+			return
+		done = QMessageBox()
+		done.setWindowTitle('Success')
+		done.setIcon(QMessageBox.Information)
+		done.setText('Changes saved.')
+		done.exec_()
+	
 	def show(self):
 		self.load_settings()
 		super().show()
+
+	def closeEvent(self, event):
+		# Just for the sake of it (yes)...
+		self.username.setText('')
+		self.password.setText('')
+		return super().closeEvent(event)

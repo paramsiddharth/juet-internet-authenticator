@@ -35,7 +35,6 @@ class Main(QMainWindow):
 		settings_button.setIcon(QIcon(resolve_icon('settings.svg')))
 		buttons.addWidget(settings_button)
 		settings_button.clicked.connect(self.settings.show)
-		# settings_button.clicked.connect(self.show_settings)
 
 		info_button = QPushButton('')
 		info_button.setIcon(QIcon(resolve_icon('info.svg')))
@@ -103,10 +102,6 @@ class Main(QMainWindow):
 					print(end='\a')
 		thread = Thread(target=click_action)
 		thread.start()
-
-	# def show_settings(self):
-	# 	settings = Settings()
-	# 	settings.show()
 
 	async def check_status(self):
 		if not is_juet_network():
