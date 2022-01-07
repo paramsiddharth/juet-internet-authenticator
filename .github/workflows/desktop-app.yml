@@ -49,7 +49,7 @@ jobs:
         asset_name: juet-internet-authenticator-linux-amd64
         asset_content_type: application/octet-stream
     - name: Upload Windows build (64-bit)
-      id: upload-windows
+      id: upload-windows-amd64
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
         asset_name: juet-internet-authenticator-win32-amd64.exe
         asset_content_type: application/octet-stream
     - name: Upload Windows build (32-bit)
-      id: upload-windows
+      id: upload-windows-x86
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
