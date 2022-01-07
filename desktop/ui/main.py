@@ -9,6 +9,7 @@ from PySide2.QtCore import Qt, Signal
 
 from data import app_name
 from network import is_connected, disconnect, connect, is_juet_network
+from helpers import resolve_icon
 from .settings import Settings
 
 class Main(QMainWindow):
@@ -16,8 +17,6 @@ class Main(QMainWindow):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-
-		self.settings = Settings(parent=self)
 
 		main_widget = QWidget()
 		self.setCentralWidget(main_widget)
@@ -31,16 +30,15 @@ class Main(QMainWindow):
 
 		# std_icon = self.style().standardIcon
 		# settings_icon = std_icon(QStyle.SP_DialogOpenButton)
+		self.settings = Settings(self)
 		settings_button = QPushButton('')
-		settings_button.setIcon(QIcon(str(Path(__file__).resolve().parent / '..' / 'icons' / 'settings.svg')))
+		settings_button.setIcon(QIcon(resolve_icon('settings.svg')))
 		buttons.addWidget(settings_button)
 		settings_button.clicked.connect(self.settings.show)
+		# settings_button.clicked.connect(self.show_settings)
 
-		std_icon = self.style().standardIcon
-		info_icon = std_icon(QStyle.SP_FileDialogInfoView)
 		info_button = QPushButton('')
-		# info_button.setIcon(QIcon(info_icon))
-		info_button.setIcon(QIcon(str(Path(__file__).resolve().parent / '..' / 'icons' / 'info.svg')))
+		info_button.setIcon(QIcon(resolve_icon('info.svg')))
 		buttons.addWidget(info_button)
 
 		title = QLabel('JUET Internet Authenticator')
@@ -61,7 +59,6 @@ class Main(QMainWindow):
 		status_bar.addPermanentWidget(status)
 		layout.addWidget(status_bar)
 
-		# self.set_status.connect(self.on_set_status)
 		self.set_status('Loading...', 'grey')
 
 		thread = Thread(target=asyncio.run, args=(self.check_status(),))
@@ -106,6 +103,10 @@ class Main(QMainWindow):
 					print(end='\a')
 		thread = Thread(target=click_action)
 		thread.start()
+
+	# def show_settings(self):
+	# 	settings = Settings()
+	# 	settings.show()
 
 	async def check_status(self):
 		if not is_juet_network():
