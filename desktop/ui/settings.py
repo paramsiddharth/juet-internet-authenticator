@@ -11,8 +11,6 @@ class Settings(QMainWindow):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.setWindowFlag(Qt.Tool, True)
-		# self.setWindowFlag(Qt.CustomizeWindowHint, True)
-		# self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
 
 		main_widget = QWidget()
 		self.setCentralWidget(main_widget)
@@ -72,6 +70,7 @@ class Settings(QMainWindow):
 		self.loading.setVisible(False)
 		self.username.setVisible(True)
 		self.password.setVisible(True)
+		self.removeFocus()
 	
 	def save_settings(self):
 		u, p = self.username.text(), self.password.text()
@@ -97,6 +96,7 @@ class Settings(QMainWindow):
 			done.setIcon(QMessageBox.Information)
 			done.setText('Changes saved.')
 			done.exec_()
+			self.removeFocus()
 		else:
 			error = QMessageBox()
 			error.setWindowTitle('Error')
@@ -121,6 +121,7 @@ class Settings(QMainWindow):
 				done.setIcon(QMessageBox.Information)
 				done.setText('Credentials flushed.')
 				done.exec_()
+				self.removeFocus()
 			else:
 				error = QMessageBox()
 				error.setWindowTitle('Error')
@@ -128,6 +129,11 @@ class Settings(QMainWindow):
 				error.setText('Failed to flush credentials.')
 				error.exec_()
 	
+	def removeFocus(self):
+		focus_widget = self.focusWidget()
+		if focus_widget is not None:
+			focus_widget.clearFocus()
+
 	def show(self):
 		self.load_settings()
 		super().show()
