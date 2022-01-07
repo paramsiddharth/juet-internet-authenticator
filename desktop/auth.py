@@ -36,3 +36,16 @@ def get_password():
 	if pw_encoded is None:
 		return None
 	return base64.b64decode(pw_encoded.encode('utf-8')).decode('utf-8')
+
+def set_credentials(username, password):
+	conf = {
+		'username': username,
+		'password': base64.b64encode(password.encode('utf-8')).decode('utf-8')
+	}
+	conf_file = get_config_file()
+	try:
+		with open(conf_file, 'w', encoding='utf-8') as f:
+			json.dump(conf, f)
+		return True
+	except:
+		return False

@@ -5,7 +5,7 @@ from PySide2.QtWidgets \
 	QMessageBox, QPushButton, QVBoxLayout, QWidget
 from data import app_name
 from helpers import resolve_icon
-from auth import get_username, get_password
+from auth import get_username, get_password, set_credentials
 
 class Settings(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -81,11 +81,18 @@ class Settings(QMainWindow):
 			error.setText('Enter a password.')
 			error.exec_()
 			return
-		done = QMessageBox()
-		done.setWindowTitle('Success')
-		done.setIcon(QMessageBox.Information)
-		done.setText('Changes saved.')
-		done.exec_()
+		if set_credentials(u, p):
+			done = QMessageBox()
+			done.setWindowTitle('Success')
+			done.setIcon(QMessageBox.Information)
+			done.setText('Changes saved.')
+			done.exec_()
+		else:
+			error = QMessageBox()
+			error.setWindowTitle('Error')
+			error.setIcon(QMessageBox.Critical)
+			error.setText('Failed to save changes.')
+			error.exec_()
 	
 	def show(self):
 		self.load_settings()
