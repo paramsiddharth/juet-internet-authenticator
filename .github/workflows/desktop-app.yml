@@ -106,7 +106,7 @@ jobs:
         if (Test-Path -Path build-requirements.txt -PathType Leaf) { pip install -r build-requirements.txt }
     - name: Build executable binary
       run: |
-        pyinstaller --add-data 'icons:icons' -wF -n juet-internet-authenticator app.py
+        pyinstaller --add-data "icons:icons" -wF -n juet-internet-authenticator app.py
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v1
       with:
