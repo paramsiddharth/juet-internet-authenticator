@@ -45,8 +45,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./uploads/juet-network-authenticator
-        asset_name: juet-network-authenticator
+        asset_path: ./uploads/juet-internet-authenticator
+        asset_name: juet-internet-authenticator
         asset_content_type: application/octet-stream
     - name: Upload Windows build
       id: upload-windows
@@ -55,8 +55,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./uploads/juet-network-authenticator.exe
-        asset_name: juet-network-authenticator
+        asset_path: ./uploads/juet-internet-authenticator.exe
+        asset_name: juet-internet-authenticator
         asset_content_type: application/octet-stream
 
   build-linux:
@@ -84,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./desktop/dist/juet-network-authenticator
+        path: ./desktop/dist/juet-internet-authenticator
 
   build-windows:
 
@@ -111,7 +111,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./desktop/dist/juet-network-authenticator.exe
+        path: ./desktop/dist/juet-internet-authenticator.exe
 
   # build-macos:
 
