@@ -1,6 +1,8 @@
 import json
 import base64
-from os import path
+from os import path, remove
+from pathlib import Path
+from shutil import rmtree
 
 from data import config_file as c_file
 
@@ -49,3 +51,17 @@ def set_credentials(username, password):
 		return True
 	except:
 		return False
+
+def flush_credentials():
+	conf = get_config_file()
+	if Path(conf).exists():
+		try:
+			if Path(conf).is_dir():
+				rmtree(conf)
+			else:
+				remove(conf)
+		except:
+			return False
+		return True
+	else:
+		return True

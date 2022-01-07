@@ -5,7 +5,7 @@ from PySide2.QtWidgets \
 	QMessageBox, QPushButton, QVBoxLayout, QWidget
 from data import app_name
 from helpers import resolve_icon
-from auth import get_username, get_password, set_credentials
+from auth import flush_credentials, get_username, get_password, set_credentials
 
 class Settings(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -19,6 +19,12 @@ class Settings(QMainWindow):
 
 		layout = QVBoxLayout()
 		main_widget.setLayout(layout)
+
+		flush_button = QPushButton('Flush credentials')
+		flush_button.setDisabled(True)
+		layout.addWidget(flush_button)
+		self.flush_button = flush_button
+		flush_button.clicked.connect(self.flush)
 
 		loading = QLabel()
 		loading_icon = QMovie(resolve_icon('loader.gif'))
@@ -60,6 +66,8 @@ class Settings(QMainWindow):
 			self.username.setText(u)
 		if p is not None:
 			self.password.setText(p)
+		if u is not None or p is not None:
+			self.flush_button.setDisabled(False)
 		self.loading_icon.stop()
 		self.loading.setVisible(False)
 		self.username.setVisible(True)
@@ -82,6 +90,8 @@ class Settings(QMainWindow):
 			error.exec_()
 			return
 		if set_credentials(u, p):
+			self.flush_button.setDisabled(False)
+			self.save_button.setDisabled(True)
 			done = QMessageBox()
 			done.setWindowTitle('Success')
 			done.setIcon(QMessageBox.Information)
@@ -93,6 +103,30 @@ class Settings(QMainWindow):
 			error.setIcon(QMessageBox.Critical)
 			error.setText('Failed to save changes.')
 			error.exec_()
+
+	def flush(self):
+		confirm = QMessageBox()
+		confirm.setWindowTitle('Confirmation')
+		confirm.setText('This will delete your credentials stored on this system. Are you sure you wish to continue?\nPress OK to proceed.')
+		confirm.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+		confirm.setIcon(QMessageBox.Question)
+		if confirm.exec_() == QMessageBox.Ok:
+			if flush_credentials():
+				self.username.setText('')
+				self.password.setText('')
+				self.flush_button.setDisabled(True)
+				self.save_button.setDisabled(False)
+				done = QMessageBox()
+				done.setWindowTitle('Success')
+				done.setIcon(QMessageBox.Information)
+				done.setText('Credentials flushed.')
+				done.exec_()
+			else:
+				error = QMessageBox()
+				error.setWindowTitle('Error')
+				error.setIcon(QMessageBox.Critical)
+				error.setText('Failed to flush credentials.')
+				error.exec_()
 	
 	def show(self):
 		self.load_settings()
