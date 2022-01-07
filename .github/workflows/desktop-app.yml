@@ -27,7 +27,7 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v1
       with:
-        name: uploads
+        name: build
     # - name: upload macos
     #   id: upload-macos 
     #   uses: actions/upload-release-asset@v1.0.1
@@ -45,7 +45,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./uploads/juet-internet-authenticator
+        asset_path: ./build/juet-internet-authenticator
         asset_name: juet-internet-authenticator
         asset_content_type: application/octet-stream
     - name: Upload Windows build
@@ -55,7 +55,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./uploads/juet-internet-authenticator.exe
+        asset_path: ./build/juet-internet-authenticator.exe
         asset_name: juet-internet-authenticator
         asset_content_type: application/octet-stream
 
