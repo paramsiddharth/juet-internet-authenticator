@@ -77,12 +77,13 @@ jobs:
         if [ -f build-requirements.txt ]; then pip install -r build-requirements.txt; fi
     - name: Build executable binary
       run: |
+        cd desktop
         pyinstaller --add-data 'icons:icons' -wF -n juet-internet-authenticator app.py
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./dist/juet-network-authenticator
+        path: ./desktop/dist/juet-network-authenticator
 
   build-windows:
 
@@ -102,12 +103,13 @@ jobs:
         if exist build-requirements.txt pip install -r build-requirements.txt
     - name: Build executable binary
       run: |
+        cd desktop
         pyinstaller --add-data "icons:icons" -wF -n juet-internet-authenticator app.py
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./dist/juet-network-authenticator.exe
+        path: ./desktop/dist/juet-network-authenticator.exe
 
   # build-macos:
 
