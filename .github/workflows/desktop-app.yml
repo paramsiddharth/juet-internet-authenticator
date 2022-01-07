@@ -10,7 +10,7 @@ jobs:
   upload-release:
 
     runs-on: ubuntu-20.04
-    needs: [build-linux, build-windows]
+    needs: [build-linux, build-windows-x64, build-windows-x86]
 
     steps:
     - uses: actions/checkout@v1
@@ -45,18 +45,28 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build/juet-internet-authenticator
-        asset_name: juet-internet-authenticator
+        asset_path: ./build/juet-internet-authenticator-x64
+        asset_name: juet-internet-authenticator-linux-amd64
         asset_content_type: application/octet-stream
-    - name: Upload Windows build
+    - name: Upload Windows build (64-bit)
       id: upload-windows
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build/juet-internet-authenticator.exe
-        asset_name: juet-internet-authenticator.exe
+        asset_path: ./build/juet-internet-authenticator-x64.exe
+        asset_name: juet-internet-authenticator-win32-amd64.exe
+        asset_content_type: application/octet-stream
+    - name: Upload Windows build (32-bit)
+      id: upload-windows
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build/juet-internet-authenticator-x86.exe
+        asset_name: juet-internet-authenticator-win32-x86.exe
         asset_content_type: application/octet-stream
 
   build-linux:
@@ -72,6 +82,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.9.5'
+        architecture: 'x64' # Optional
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -79,14 +90,14 @@ jobs:
         if [ -f build-requirements.txt ]; then pip install -r build-requirements.txt; fi
     - name: Build executable binary
       run: |
-        pyinstaller --add-data 'icons:icons' -wF -n juet-internet-authenticator app.py
+        pyinstaller --add-data 'icons:icons' -wF -n juet-internet-authenticator-x64 app.py
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./desktop/dist/juet-internet-authenticator
+        path: ./desktop/dist/juet-internet-authenticator-x64
 
-  build-windows:
+  build-windows-x64:
 
     runs-on: windows-2019
     defaults:
@@ -99,6 +110,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.9.5'
+        architecture: 'x64'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -106,12 +118,40 @@ jobs:
         if (Test-Path -Path build-requirements.txt -PathType Leaf) { pip install -r build-requirements.txt }
     - name: Build executable binary
       run: |
-        pyinstaller --add-data 'icons;icons' -wF -n juet-internet-authenticator app.py
+        pyinstaller --add-data 'icons;icons' -wF -n juet-internet-authenticator-x64 app.py
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v1
       with:
         name: build
-        path: ./desktop/dist/juet-internet-authenticator.exe
+        path: ./desktop/dist/juet-internet-authenticator-x64.exe
+
+  build-windows-x86:
+
+    runs-on: windows-2019
+    defaults:
+      run:
+        working-directory: ./desktop
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.5'
+        architecture: 'x86'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if (Test-Path -Path requirements.txt -PathType Leaf) { pip install -r requirements.txt }
+        if (Test-Path -Path build-requirements.txt -PathType Leaf) { pip install -r build-requirements.txt }
+    - name: Build executable binary
+      run: |
+        pyinstaller --add-data 'icons;icons' -wF -n juet-internet-authenticator-x86 app.py
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: build
+        path: ./desktop/dist/juet-internet-authenticator-x86.exe
 
   # build-macos:
 
