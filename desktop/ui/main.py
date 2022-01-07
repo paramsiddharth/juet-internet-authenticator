@@ -1,13 +1,12 @@
 import asyncio
 from threading import Thread
-from pathlib import Path
 from PySide2.QtWidgets \
-	import QMainWindow, QStyle, QVBoxLayout, QPushButton, QWidget, \
+	import QMainWindow, QMessageBox, QVBoxLayout, QPushButton, QWidget, \
 	QStatusBar, QLabel, QHBoxLayout
 from PySide2.QtGui import QFont, QIcon
 from PySide2.QtCore import Qt, Signal
 
-from data import app_name
+from data import app_name, app_info
 from network import is_connected, disconnect, connect, is_juet_network
 from helpers import resolve_icon
 from .settings import Settings
@@ -39,6 +38,7 @@ class Main(QMainWindow):
 		info_button = QPushButton('')
 		info_button.setIcon(QIcon(resolve_icon('info.svg')))
 		buttons.addWidget(info_button)
+		info_button.clicked.connect(self.show_info)
 
 		title = QLabel('JUET Internet Authenticator')
 		title.setStyleSheet('padding-top: 10px; padding-bottom: 15px; font-weight: bold;')
@@ -117,6 +117,12 @@ class Main(QMainWindow):
 			self.connect_button.setText('Connect')
 			self.set_status('DISCONNECTED', 'grey')
 		self.connect_button.setDisabled(False)
+
+	def show_info(self):
+		msg = QMessageBox()
+		msg.setTextFormat(Qt.RichText)
+		msg.setText(app_info)
+		msg.exec_()
 
 	def set_status(self, msg='READY', color='green'):
 		self.status.setText(msg)
