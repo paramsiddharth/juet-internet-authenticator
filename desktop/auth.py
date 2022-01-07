@@ -9,6 +9,8 @@ from data import config_file as c_file
 __all__ = [
 	'get_username',
 	'get_password'
+	'set_credentials',
+	'flush_credentials'
 ]
 
 def get_config_file():

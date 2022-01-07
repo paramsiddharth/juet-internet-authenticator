@@ -9,7 +9,8 @@ from auth import get_username, get_password
 __all__ = [
 	'is_connected',
 	'disconnect',
-	'connect'
+	'connect',
+	'is_juet_network'
 ]
 
 def remove_prefix(url):

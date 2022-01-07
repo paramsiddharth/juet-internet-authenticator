@@ -120,6 +120,7 @@ class Main(QMainWindow):
 
 	def show_info(self):
 		msg = QMessageBox()
+		msg.setWindowTitle('About')
 		msg.setTextFormat(Qt.RichText)
 		msg.setText(app_info)
 		msg.exec_()

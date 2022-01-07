@@ -10,10 +10,13 @@ app_info = f'''\
 <b>{app_name}</b> lets you login/logout of the JUET Internet \
 authentication system seamlessly.<br />
 <br />
+<div style='text-align: right;'>
 {
 	'<br/>'.join([f'{thing} from {entity}.' for thing, entity in external_attrib.items()])
-}<br />
-© Param Siddhharth 2022-{datetime.now().year}'''
+}<br/>
+Made with ❤ by <a href='https://www.paramsid.com'>Param</a>.<br/>
+© Param Siddhharth 2022-{datetime.now().year}
+</div>'''
 
 # System-specific
 test_url = 'https://www.google.com'
